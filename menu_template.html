@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>チャ丼 - 店内メニュー</title>
+    <style>
+        @page {
+            size: 182mm 257mm;
+            /* B5サイズ */
+            margin: 0;
+        }
+
+        :root {
+            --bg-color: #F5F1EA;
+            /* 生成り系 */
+            --main-text: #222222;
+            --accent-red: #B3262D;
+            /* 濃い赤 */
+            --font-mincho: "Yu Mincho", "MS PMincho", "Hiragino Mincho ProN", serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            width: 182mm;
+            height: 257mm;
+            overflow: hidden;
+            -webkit-print-color-adjust: exact;
+            /* 背景色・透かしを強制印刷 */
+            box-sizing: border-box;
+        }
+
+        .menu-container {
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            position: relative;
+            font-family: var(--font-mincho);
+            color: var(--main-text);
+            padding: 10mm 15mm;
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 背景ロゴ透かし */
+        .bg-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            opacity: 0.12;
+            /* 10-15% */
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* コンテンツレイヤー */
+        .content {
+            position: relative;
+            z-index: 1;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ヒーローセクション（一番上） */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .main-title {
+            color: var(--accent-red);
+            font-size: 30px;
+            font-weight: bold;
+            letter-spacing: 0.15em;
+            margin: 0 0 10px 0;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .main-price-wrapper {
+            margin-bottom: 12px;
+        }
+
+        .main-price {
+            color: var(--accent-red);
+            font-size: 26px;
+            font-weight: bold;
+            margin-left: 15px;
+        }
+
+        .sub-desc {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .main-catch {
+            font-size: 15px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 15px 0;
+            color: #888;
+            letter-spacing: 5px;
+        }
+
+        /* 2カラムレイアウト */
+        .columns {
+            display: flex;
+            gap: 25px;
+            flex-grow: 1;
+        }
+
+        .column-left {
+            flex: 1;
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+            padding-right: 20px;
+        }
+
+        .column-right {
+            flex: 1;
+            padding-left: 5px;
+        }
+
+        /* セクション共通 */
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.8);
+            padding-bottom: 4px;
+            display: inline-block;
+        }
+
+        /* 左カラム：トッピング */
+        .topping-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 15px 0;
+        }
+
+        .topping-item {
+            font-size: 15px;
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 16px;
+        }
+
+        .topping-item::before {
+            content: '・';
+            position: absolute;
+            left: 0;
+        }
+
+        .topping-note {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-top: 15px;
+        }
+
+        .price-text {
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 14px;
+        }
+
+        /* 右カラム：限定 */
+        .limited-item {
+            margin-bottom: 20px;
+        }
+
+        .limited-desc {
+            font-size: 12px;
+            color: #444;
+            margin: 0 0 3px 0;
+        }
+
+        .limited-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0 0 3px 0;
+            line-height: 1.4;
+        }
+
+        .limited-price {
+            font-size: 15px;
+            text-align: right;
+            margin: 0;
+        }
+
+        /* 右カラム：ドリンク */
+        .drink-section {
+            margin-top: 25px;
+        }
+
+        .drink-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .drink-item {
+            font-size: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .drink-name-part::before {
+            content: '・';
+        }
+
+        /* フッター */
+        .footer {
+            text-align: center;
+            margin-top: auto;
+            padding-top: 10px;
+            position: relative;
+        }
+
+        .footer-catch {
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 0.1em;
+            margin-bottom: 10px;
+        }
+
+        .footer-logo {
+            width: 50px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="menu-container">
+        <!-- 透かしロゴ -->
+        <img src="../素材倉庫/01_画像・写真素材（元データ）/チャ丼ロゴ.PNG" alt="チャ丼ロゴ 透かし" class="bg-watermark">
+
+        <div class="content">
+            <!-- ヒーローセクション -->
+            <div class="hero-section">
+                <h1 class="main-title"><!-- {{MAIN_TITLE}} --></h1>
+
+                <div class="main-price-wrapper">
+                    <span style="font-size: 16px;"><!-- {{MAIN_TITLE}} --></span>
+                    <span class="main-price"><!-- {{MAIN_PRICE}} --></span>
+                </div>
+
+                <p class="sub-desc">
+                    <!-- {{MAIN_DESC}} -->
+                </p>
+                <p class="main-catch">
+                    <!-- {{MAIN_NOTE}} -->
+                </p>
+            </div>
+
+            <div class="divider">⸻</div>
+
+            <!-- 2カラムレイアウト -->
+            <div class="columns">
+                <!-- 左カラム：トッピング -->
+                <div class="column-left">
+                    <div class="section-title">有料トッピング<span
+                            style="font-size:12px; font-weight:normal; margin-left: 10px;">（※1つまで無料）</span></div>
+
+                    <!-- {{TOPPING_LIST}} -->
+
+                    <!-- {{TOPPING_NOTE}} -->
+                </div>
+
+                <!-- 右カラム：限定＆ドリンク -->
+                <div class="column-right">
+                    <div class="section-title">数量限定</div>
+
+                    <!-- {{LIMITED_LIST}} -->
+
+                    <!-- ドリンク -->
+                    <div class="drink-section">
+                        <div class="section-title">ドリンク</div>
+                        <!-- {{DRINK_LIST}} -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- フッター -->
+            <div class="footer">
+                <div class="footer-catch">今日、何のせる？</div>
+                <img src="../素材倉庫/01_画像・写真素材（元データ）/チャ丼ロゴ.PNG" alt="チャ丼スモールロゴ" class="footer-logo">
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
